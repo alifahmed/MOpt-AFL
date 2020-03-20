@@ -16,7 +16,7 @@
 #   http://www.apache.org/licenses/LICENSE-2.0
 #
 
-PREFIX      ?= /usr/local
+PREFIX      ?= /afl
 HELPER_PATH  = $(PREFIX)/lib/afl
 BIN_PATH     = $(PREFIX)/bin
 
@@ -24,7 +24,7 @@ VERSION     = $(shell grep '^\#define VERSION ' ../config.h | cut -d '"' -f2)
 
 LLVM_CONFIG ?= llvm-config
 
-CFLAGS      ?= -O3 -funroll-loops
+#CFLAGS      ?= -O3 -funroll-loops
 CFLAGS      += -Wall -D_FORTIFY_SOURCE=2 -g -Wno-pointer-sign \
                -DAFL_PATH=\"$(HELPER_PATH)\" -DBIN_PATH=\"$(BIN_PATH)\" \
                -DVERSION=\"$(VERSION)\" 
@@ -32,7 +32,7 @@ ifdef AFL_TRACE_PC
   CFLAGS    += -DUSE_TRACE_PC=1
 endif
 
-CXXFLAGS    ?= -O3 -funroll-loops
+#CXXFLAGS    ?= -O3 -funroll-loops
 CXXFLAGS    += -Wall -D_FORTIFY_SOURCE=2 -g -Wno-pointer-sign \
                -DVERSION=\"$(VERSION)\" -Wno-variadic-macros
 

@@ -16,7 +16,7 @@
 PROGNAME    = afl
 VERSION     = $(shell grep '^\#define VERSION ' config.h | cut -d '"' -f2)
 
-PREFIX     ?= /usr/local
+PREFIX     ?= /afl
 BIN_PATH    = $(PREFIX)/bin
 HELPER_PATH = $(PREFIX)/lib/afl
 DOC_PATH    = $(PREFIX)/share/doc/afl
@@ -27,8 +27,8 @@ MISC_PATH   = $(PREFIX)/share/afl
 PROGS       = afl-gcc afl-fuzz afl-showmap afl-tmin afl-gotcpu afl-analyze
 SH_PROGS    = afl-plot afl-cmin afl-whatsup
 
-CFLAGS     ?= -O3 -funroll-loops
-CFLAGS     += -Wall -D_FORTIFY_SOURCE=2 -g -Wno-pointer-sign \
+#CFLAGS     ?= -O3 -funroll-loops
+CFLAGS     += -O3 -funroll-loops -march=native -Wall -D_FORTIFY_SOURCE=2 -g -Wno-pointer-sign \
 	      -DAFL_PATH=\"$(HELPER_PATH)\" -DDOC_PATH=\"$(DOC_PATH)\" \
 	      -DBIN_PATH=\"$(BIN_PATH)\"
 

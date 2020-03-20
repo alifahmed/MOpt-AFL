@@ -50,9 +50,9 @@
 /* Default memory limit for child process (MB): */
 
 #ifndef __x86_64__ 
-#  define MEM_LIMIT         25
+#  define MEM_LIMIT         1024
 #else
-#  define MEM_LIMIT         50
+#  define MEM_LIMIT         2048
 #endif /* ^!__x86_64__ */
 
 /* Default memory limit when running in QEMU mode (MB): */
@@ -62,12 +62,12 @@
 /* Number of calibration cycles per every new test case (and for test
    cases that show variable behavior): */
 
-#define CAL_CYCLES          8
-#define CAL_CYCLES_LONG     40
+#define CAL_CYCLES          2
+#define CAL_CYCLES_LONG     4
 
 /* Number of subsequent timeouts before abandoning an input file: */
 
-#define TMOUT_LIMIT         250
+#define TMOUT_LIMIT         50
 
 /* Maximum number of unique hangs or crashes to record: */
 
@@ -264,7 +264,8 @@
 
 /* Environment variable used to pass SHM ID to the called program. */
 
-#define SHM_ENV_VAR         "__AFL_SHM_ID"
+#define SHM_IDX_ENV_VAR         "__AFL_IDX_SHM_ID"
+#define SHM_VAL_ENV_VAR         "__AFL_VAL_SHM_ID"
 
 /* Other less interesting, internal-only variables. */
 
@@ -313,7 +314,8 @@
    problems with complex programs). You need to recompile the target binary
    after changing this - otherwise, SEGVs may ensue. */
 
-#define MAP_SIZE_POW2       16
+//#define MAP_SIZE_POW2       16
+#define MAP_SIZE_POW2       20
 #define MAP_SIZE            (1 << MAP_SIZE_POW2)
 
 /* Maximum allocator request size (keep well under INT_MAX): */
@@ -346,5 +348,9 @@
    measuring coverage that could be attained by a "dumb" fuzzing algorithm: */
 
 // #define IGNORE_FINDS
+
+#define LOC1_INIT 3
+#define LOC2_INIT 5
+#define LOC3_INIT 7
 
 #endif /* ! _HAVE_CONFIG_H */
