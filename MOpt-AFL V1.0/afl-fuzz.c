@@ -2735,12 +2735,12 @@ static u8 calibrate_case(char** argv, struct queue_entry* q, u8* use_mem,
 
     cksum = hash32_time(trace_bits, MAP_SIZE, HASH_CONST);
 
-ttt = get_cur_time_us();
     if (q->exec_cksum != cksum) {
 
       u8 hnb = has_new_bits(virgin_bits);
       if (hnb > new_bits) new_bits = hnb;
 
+		ttt = get_cur_time_us();
       if (q->exec_cksum) {
 
         u32 i;
@@ -2764,10 +2764,8 @@ ttt = get_cur_time_us();
         memcpy(first_trace, trace_bits, MAP_SIZE);
 
       }
-
+		map_copy_time += get_cur_time_us() - ttt;
     }
-
-	map_copy_time += get_cur_time_us() - ttt;
   }
 
   stop_us = get_cur_time_us();
@@ -12158,7 +12156,11 @@ cull_queue_time /= 1000;
 
 	struct rusage usage;
   getrusage(RUSAGE_CHILDREN, &usage);
-  SAYF("Page faults(minor) : %ld\n", usage.ru_minflt);
+  SAYF("Page faults children : %ld\n", usage.ru_minflt);
+
+	struct rusage usageS;
+  getrusage(RUSAGE_SELF, &usageS);
+  SAYF("Page faults self : %ld\n", usageS.ru_minflt);
   
   char log_name[128];
   snprintf(log_name, 128, "../%s.csv", sync_id);
@@ -12178,7 +12180,8 @@ cull_queue_time /= 1000;
   fprintf(fp, "%llu,", map_copy_time);
   fprintf(fp, "%llu,", score_update_time);
   fprintf(fp, "%llu,", cull_queue_time);
-  fprintf(fp, "%ld\n", usage.ru_minflt);
+  fprintf(fp, "%ld,", usage.ru_minflt);
+  fprintf(fp, "%ld\n", usageS.ru_minflt);
   fclose(fp);
 
   exit(0);
