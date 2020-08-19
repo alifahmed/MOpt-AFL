@@ -291,6 +291,7 @@ uint32_t R_draw(){
 	} else{
 		isAlloc[res-1] = 1;
 	}
+	return res;
 }
 
 
