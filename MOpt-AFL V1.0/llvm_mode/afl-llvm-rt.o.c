@@ -55,6 +55,10 @@ u8* __afl_area_ptr = __afl_area_initial;
 __thread u32 __afl_prev_loc;
 
 
+static char isAlloc[MAP_SIZE];
+static int nDraw = 0;
+static int nColl = 0;
+
 /* Running in persistent mode? */
 
 static u8 is_persistent;
@@ -98,6 +102,9 @@ static void __afl_start_forkserver(void) {
   s32 child_pid;
 
   u8  child_stopped = 0;
+
+	printf("Number of draws (edges): %u\n", nDraw);
+	printf("Number of collisions: %u\n", nColl);
 
   /* Phone home and tell the parent that we're OK. If parent isn't there,
      assume we're not running in forkserver mode and just execute program. */
@@ -273,12 +280,28 @@ void __sanitizer_cov_trace_pc_guard(uint32_t* guard) {
    ID of 0 as a special value to indicate non-instrumented bits. That may
    still touch the bitmap, but in a fairly harmless way. */
 
+
+
+
+uint32_t R_draw(){
+	nDraw++;
+	uint32_t res = R(MAP_SIZE - 1) + 1;
+	if(isAlloc[res-1]){
+		nColl++;
+	} else{
+		isAlloc[res-1] = 1;
+	}
+}
+
+
 void __sanitizer_cov_trace_pc_guard_init(uint32_t* start, uint32_t* stop) {
 
   u32 inst_ratio = 100;
   u8* x;
 
   if (start == stop || *start) return;
+
+
 
   x = getenv("AFL_INST_RATIO");
   if (x) inst_ratio = atoi(x);
@@ -292,11 +315,11 @@ void __sanitizer_cov_trace_pc_guard_init(uint32_t* start, uint32_t* stop) {
      to avoid duplicate calls (which can happen as an artifact of the underlying
      implementation in LLVM). */
 
-  *(start++) = R(MAP_SIZE - 1) + 1;
+  *(start++) = R_draw();//(MAP_SIZE - 1) + 1;
 
   while (start < stop) {
 
-    if (R(100) < inst_ratio) *start = R(MAP_SIZE - 1) + 1;
+    if (R(100) < inst_ratio) *start = R_draw();//(MAP_SIZE - 1) + 1;
     else *start = 0;
 
     start++;
