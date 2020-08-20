@@ -102,9 +102,10 @@ static void __afl_start_forkserver(void) {
   s32 child_pid;
 
   u8  child_stopped = 0;
-
-	printf("Number of draws (edges): %u\n", nDraw);
-	printf("Number of collisions: %u\n", nColl);
+	FILE* fp = fopen("edgeLog.txt", "w");
+	fprintf(fp, "[ALIF] Number of draws (edges): %u\n", nDraw);
+	fprintf(fp, "[ALIF] Number of collisions: %u\n", nColl);
+	fclose(fp);
 
   /* Phone home and tell the parent that we're OK. If parent isn't there,
      assume we're not running in forkserver mode and just execute program. */
